@@ -4867,6 +4867,13 @@ namespace glz
       return read<opts{}>(value, std::forward<Buffer>(buffer), ctx);
    }
 
+   template <read_supported<JSON> T, is_buffer Buffer>
+      requires(!is_input_streaming<std::remove_reference_t<Buffer>>)
+   [[nodiscard]] error_ctx read_json(T& value, Buffer&& buffer, context& ctx)
+   {
+      return read<opts{}>(value, std::forward<Buffer>(buffer), ctx);
+   }
+
    // Overload for streaming input buffers (istream_buffer)
    template <read_supported<JSON> T, class Buffer>
       requires is_input_streaming<std::remove_reference_t<Buffer>>

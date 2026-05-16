@@ -74,6 +74,14 @@ namespace glz
       return convert_from_generic(value, source);
    }
 
+   // Optimized overload for types that support direct conversion
+   template <read_supported<JSON> T, num_mode Mode, template <class> class MapType>
+      requires directly_convertible_from_generic<T>
+   [[nodiscard]] error_ctx read_json(T& value, const generic_json<Mode, MapType>& source, context&)
+   {
+      return convert_from_generic(value, source);
+   }
+
    // General overload for complex types (structs, etc.) that need JSON round-trip
    template <read_supported<JSON> T, num_mode Mode, template <class> class MapType>
       requires(!directly_convertible_from_generic<T>)
@@ -82,6 +90,20 @@ namespace glz
       auto buffer = source.dump();
       if (buffer) {
          return read_json(value, *buffer);
+      }
+      else {
+         return buffer.error();
+      }
+   }
+
+   // General overload for complex types (structs, etc.) that need JSON round-trip
+   template <read_supported<JSON> T, num_mode Mode, template <class> class MapType>
+      requires(!directly_convertible_from_generic<T>)
+   [[nodiscard]] error_ctx read_json(T& value, const generic_json<Mode, MapType>& source, context& ctx)
+   {
+      auto buffer = source.dump();
+      if (buffer) {
+         return read_json(value, *buffer, ctx);
       }
       else {
          return buffer.error();
