@@ -123,6 +123,7 @@ namespace glz
       // NOTE: The default constructor is valid for std::string_view, so we use this rather than {}
       // because debuggers like jumping to std::string_view initialization calls
       std::string scratch{}; // Reusable scratch buffer for intermediate parsing (key lookup, etc.)
+      void* userData;
    };
 
    // Concept for any context type (base or streaming)
